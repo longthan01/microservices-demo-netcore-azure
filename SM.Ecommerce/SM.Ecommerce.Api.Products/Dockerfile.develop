@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+ARG BUILD_CONFIGURATION=Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:80
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+EXPOSE 80
+
+WORKDIR /src
+COPY ["SM.Ecommerce.Api.Products/SM.Ecommerce.Api.Products.csproj", "SM.Ecommerce.Api.Products/"]
+
+RUN dotnet restore "SM.Ecommerce.Api.Products/SM.Ecommerce.Api.Products.csproj"
+COPY . .
+WORKDIR "/src/SM.Ecommerce.Api.Products"
+RUN dotnet build --no-restore "SM.Ecommerce.Api.Products.csproj" -c $BUILD_CONFIGURATION
+
+RUN echo "exec dotnet run --no-build --no-launch-profile -c $BUILD_CONFIGURATION --" > /entrypoint.sh
+
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
