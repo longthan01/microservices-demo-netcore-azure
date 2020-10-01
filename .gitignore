@@ -17,3 +17,6 @@ SM.Kafka/SM.Kafka.Producer/bin/
 SM.Kafka/SM.Kafka.Producer/obj/
 SM.Ecommerce/.vs/
 SM.Kafka/.vs/
+SM.Ecommerce/bin/
+SM.Ecommerce/obj/
+
