@@ -10,3 +10,10 @@ SM.Ecommerce/SM.Ecommerce.Api.Orders/obj/
 SM.Ecommerce/SM.Ecommerce.Api.Orders/bin/
 SM.Ecommerce/SM.Ecommerce.Api.Customers/obj/
 SM.Ecommerce/SM.Ecommerce.Api.Customers/bin/
+SM.Kafka/packages/
+SM.Kafka/SM.Kafka.Consumer/bin/
+SM.Kafka/SM.Kafka.Consumer/obj/
+SM.Kafka/SM.Kafka.Producer/bin/
+SM.Kafka/SM.Kafka.Producer/obj/
+SM.Ecommerce/.vs/
+SM.Kafka/.vs/
