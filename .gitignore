@@ -20,3 +20,8 @@ SM.Kafka/.vs/
 SM.Ecommerce/bin/
 SM.Ecommerce/obj/
 
+Hansen.Kafka.Utility/Hansen.Kafka.Utility/bin/
+packages/
+bin/
+obj/
+.vs/

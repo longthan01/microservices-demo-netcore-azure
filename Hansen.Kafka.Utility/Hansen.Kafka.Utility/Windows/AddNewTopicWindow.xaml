@@ -1,0 +1,48 @@
+﻿<Window
+    x:Class="Hansen.Kafka.Utility.Windows.AddNewTopicWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:Hansen.Kafka.Utility.Windows"
+    mc:Ignorable="d"
+    Title="AddNewTopicWindow"
+    Height="200"
+    Width="400">
+    <Window.Resources>
+        <Style
+            x:Key="TxtTopicNameStyle"
+            TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger
+                    Property="Text"
+                    Value="">
+                    <Trigger.Setters>
+                        <Setter
+                            Property="BorderBrush"
+                            Value="Red" />
+                    </Trigger.Setters>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Label
+            Width="200"
+            Margin="0 25 0 0"
+            HorizontalAlignment="Center" VerticalAlignment="Top"
+            Height="30">Name</Label>
+        <TextBox
+            Style="{StaticResource TxtTopicNameStyle}"
+            Text="{Binding TopicName}"
+            Width="200"
+            Height="40"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"></TextBox>
+        <Button
+            Click="ButtonBase_OnClick"
+            HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 20"
+            Width="50"
+            Height="35">Ok</Button>
+    </Grid>
+</Window>

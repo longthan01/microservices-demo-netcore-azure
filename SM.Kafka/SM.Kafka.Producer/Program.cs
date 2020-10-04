@@ -13,7 +13,7 @@ namespace SM.Kafka.Producer
             IProducer pr = new Producer(new ProducerConfig()
             {
                 BootstrapServers = "localhost:9092"
-            });
+            }, args[1]);
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (s, e) =>
             {

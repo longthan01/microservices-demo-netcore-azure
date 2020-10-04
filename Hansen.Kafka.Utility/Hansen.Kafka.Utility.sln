@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1259
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hansen.Kafka.Utility", "Hansen.Kafka.Utility\Hansen.Kafka.Utility.csproj", "{23DCFD38-82FE-4A7D-9E7D-DCC6D256B3BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hansen.Kafka.Utility.Tests", "Hansen.Kafka.Utility.Tests\Hansen.Kafka.Utility.Tests.csproj", "{6217B24E-DF29-4E12-A135-A01B363BDD8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23DCFD38-82FE-4A7D-9E7D-DCC6D256B3BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23DCFD38-82FE-4A7D-9E7D-DCC6D256B3BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23DCFD38-82FE-4A7D-9E7D-DCC6D256B3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23DCFD38-82FE-4A7D-9E7D-DCC6D256B3BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6217B24E-DF29-4E12-A135-A01B363BDD8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6217B24E-DF29-4E12-A135-A01B363BDD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6217B24E-DF29-4E12-A135-A01B363BDD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6217B24E-DF29-4E12-A135-A01B363BDD8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC2B6221-0432-4C51-B9D1-698F9B15CED9}
+	EndGlobalSection
+EndGlobal

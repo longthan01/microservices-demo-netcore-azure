@@ -7,10 +7,12 @@ namespace SM.Kafka.Producer
     public class Producer : IProducer
     {
         private readonly ProducerConfig _config;
+        private readonly string _topicName;
 
-        public Producer(ProducerConfig config)
+        public Producer(ProducerConfig config, string topicName)
         {
             _config = config;
+            _topicName = topicName;
         }
         public async Task<ProduceResult> Publish(MessageValue mv)
         {
@@ -19,7 +21,7 @@ namespace SM.Kafka.Producer
                 using (var p = new ProducerBuilder<Null, string>(_config).Build())
                 {
                     Console.WriteLine($"Produce message {mv.Value}");
-                    var dr = await p.ProduceAsync(Topics.SM_MESSAGE, new Message<Null, string>
+                    var dr = await p.ProduceAsync(this._topicName, new Message<Null, string>
                     {
                         Value = mv.Value
                     });

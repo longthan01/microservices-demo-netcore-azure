@@ -16,7 +16,7 @@ namespace SM.Kafka.Consumer
             IConsumer consumer = new Consumer(new ConsumerConfig()
             {
                 CancellationTokenSource = cts,
-                Topic = "sm-message",
+                Topic = args[0],
                 KafkaConsumerConfig = new Confluent.Kafka.ConsumerConfig()
                 {
                     GroupId = Groups.SM_Group1,
