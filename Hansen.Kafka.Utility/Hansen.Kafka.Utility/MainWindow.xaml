@@ -10,7 +10,7 @@
     Title="MainWindow"
     MouseDown="MainWindow_OnMouseDown"
     Height="450"
-    Width="800">
+    Width="1200">
 
     <Window.Resources>
         <Style
@@ -77,7 +77,7 @@
                         Width="100">Host</Label>
                     <TextBox
                         Margin="10 0 0 0 "
-                        Width="200"
+                        Width="150"
                         Text="{Binding Path=Host}"
                         Height="30"></TextBox>
                     <Label
@@ -88,13 +88,14 @@
                         Height="30"
                         Width="100"></TextBox>
                     <Button
+                        Margin="0 0 10 0"
                         Width="50"
                         Background="{Binding BtnLoadColor}"
                         Click="BtnLoadClick"
                         Height="30">Load</Button>
                 </WrapPanel>
             </Grid>
-           
+
             <Grid
                 Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -198,6 +199,23 @@
                                     Width="350"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"></TextBox>
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Background="Crimson"
+                                    Margin="10 10 10 0"
+                                    Width="50"
+                                    Click="BtnStreamClick"
+                                    Height="30">Stream</Button>
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Margin="10 10 10 0"
+                                    Width="100"
+                                    Click="BtnStopStreamClick"
+                                    Height="30">Stop stream</Button>
+                                <Label
+                                    Margin="0 10 10 0"
+                                    Visibility="{Binding StreamingMode}"
+                                    Foreground="Red">Streaming messages...</Label>
                             </WrapPanel>
                             <DataGrid
                                 CanUserAddRows="False"
@@ -206,6 +224,11 @@
                         </Grid>
                     </TabItem>
                 </TabControl>
+                <fa:ImageAwesome
+                    Grid.Column="0" Width="30"
+                    Icon="Spinner"
+                    Visibility="{Binding LoadingVisibility}"
+                    Spin="True" />
                 <DockPanel
                     Margin="10 25 10 10"
                     Grid.Row="0"
@@ -226,10 +249,5 @@
                 </DockPanel>
             </Grid>
         </Grid>
-        <fa:ImageAwesome
-            Width="30"
-            Icon="Spinner"
-            Visibility="{Binding LoadingVisibility}"
-            Spin="True" />
     </Grid>
 </Window>

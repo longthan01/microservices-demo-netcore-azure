@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Hansen.Kafka.Utility.Configuration;
 using Hansen.Kafka.Utility.Models;
 using log4net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Partition = Hansen.Kafka.Utility.Models.Partition;
 
 namespace Hansen.Kafka.Utility.Providers
@@ -49,7 +49,6 @@ namespace Hansen.Kafka.Utility.Providers
 
             return Task.FromResult((IEnumerable<Topic>)result);
         }
-
         private Metadata GetMetadataPerTopic(string topicName)
         {
             using (var adminClient = new AdminClientBuilder(_connectionConfiguration.ToPairs()).Build())
@@ -60,6 +59,14 @@ namespace Hansen.Kafka.Utility.Providers
         }
         public Task<IEnumerable<Message>> GetMessagesAsync(string topic)
         {
+            return this.GetMessagesAsync(topic, AutoOffsetReset.Earliest);
+        }
+        public Task<IEnumerable<Message>> GetStreamMessagesAsync(string topic)
+        {
+            return this.GetMessagesAsync(topic, AutoOffsetReset.Latest);
+        }
+        private Task<IEnumerable<Message>> GetMessagesAsync(string topic, AutoOffsetReset offsetResetSetting)
+        {
             List<Message> result = new List<Message>();
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             try
@@ -68,7 +75,7 @@ namespace Hansen.Kafka.Utility.Providers
                 {
                     BootstrapServers = _connectionConfiguration.BootstrapServer,
                     GroupId = Guid.NewGuid().ToString(),
-                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                    AutoOffsetReset = offsetResetSetting,
                     EnableAutoCommit = false
                 };
                 using (var consumer = new ConsumerBuilder<Null, string>(consumerConfig).Build())
@@ -98,7 +105,6 @@ namespace Hansen.Kafka.Utility.Providers
             }
             return Task.FromResult((IEnumerable<Message>)result);
         }
-
         public async Task AddNewTopicAsync(string topicName, int numOfPartition, short replicationFactor)
         {
             using (var adminClient = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = _connectionConfiguration.BootstrapServer }).Build())

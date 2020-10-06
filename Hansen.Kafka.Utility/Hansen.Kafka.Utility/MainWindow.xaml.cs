@@ -1,6 +1,7 @@
 ﻿using Hansen.Kafka.Utility.Annotations;
 using Hansen.Kafka.Utility.Configuration;
 using Hansen.Kafka.Utility.Models;
+using Hansen.Kafka.Utility.Providers;
 using Hansen.Kafka.Utility.Windows;
 using log4net;
 using log4net.Config;
@@ -9,11 +10,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Hansen.Kafka.Utility.Providers;
+using Timer = System.Timers.Timer;
 
 namespace Hansen.Kafka.Utility
 {
@@ -22,6 +24,7 @@ namespace Hansen.Kafka.Utility
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        #region properties - variables
         private const string DEFAULT_HOST = "localhost";
         private const string DEFAULT_PORT = "9092";
 
@@ -170,6 +173,21 @@ namespace Hansen.Kafka.Utility
         }
 
         private ILog _logger = null;
+
+        private CancellationTokenSource streamCancellationTokenSource = null;
+        private System.Windows.Visibility _streamingMode = Visibility.Hidden;
+
+        public System.Windows.Visibility StreamingMode
+        {
+            get { return _streamingMode; }
+            set
+            {
+                _streamingMode = value; 
+                this.OnPropertyChanged("StreamingMode");
+            }
+        }
+
+        #endregion
         public MainWindow()
         {
             InitializeComponent();
@@ -252,14 +270,14 @@ namespace Hansen.Kafka.Utility
             AddNewTopicWindow antw = new AddNewTopicWindow();
             antw.OnOk += async (sender, args) =>
             {
-                await AddNewTopic(args.TopicName);
+                await AddNewTopic(args.TopicName, args.NumOfPartitions, args.ReplicationFactor);
                 antw.Close();
                 await LoadTopics();
             };
             antw.ShowDialog();
         }
 
-        public async Task AddNewTopic(string topicName)
+        public async Task AddNewTopic(string topicName, int numOfPartitions, short replicationFactor)
         {
             try
             {
@@ -268,7 +286,7 @@ namespace Hansen.Kafka.Utility
                     BootstrapServer = $"{Host}:{Port}"
                 };
                 KafkaDataProvider dataProvider = new KafkaDataProvider(config, _logger);
-                await dataProvider.AddNewTopicAsync(topicName, 1, -1);
+                await dataProvider.AddNewTopicAsync(topicName, numOfPartitions, replicationFactor);
             }
             catch (Exception e)
             {
@@ -299,7 +317,7 @@ namespace Hansen.Kafka.Utility
                 Logs.Add(e.Message);
                 return;
             }
-           
+
             foreach (var topic in task.Result)
             {
                 Topics.Add(topic);
@@ -325,7 +343,6 @@ namespace Hansen.Kafka.Utility
                 Logs.Add(e.Message);
                 return;
             }
-           
             foreach (var message in task.Result)
             {
                 Messages.Add(message);
@@ -341,6 +358,43 @@ namespace Hansen.Kafka.Utility
             return toggleBtnLoad;
         }
 
+        private void StreamMessages()
+        {
+            streamCancellationTokenSource = new CancellationTokenSource();
+            var configuration = new ConnectionConfiguration()
+            {
+                BootstrapServer = $"{Host}:{Port}"
+            };
+            var dataProvider = new KafkaDataProvider(configuration, _logger);
+            Timer timer = new Timer { Interval = 1000 };
+            timer.Elapsed += async (o, args) =>
+            {
+                try
+                {
+                    var messages = await dataProvider.GetStreamMessagesAsync(TopicName);
+                    foreach (var msg in messages)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Messages.Add(msg);
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Logs.Add(ex.Message);
+                    });
+                }
+
+                if (streamCancellationTokenSource.IsCancellationRequested)
+                {
+                    timer.Stop();
+                }
+            };
+            timer.Start();
+        }
         #endregion
 
         #region event handlers
@@ -379,6 +433,24 @@ namespace Hansen.Kafka.Utility
             TopicName = topic.Name;
             IsMessagesTabSelected = true;
         }
+
+        private void BtnStopStreamClick(object sender, RoutedEventArgs e)
+        {
+            streamCancellationTokenSource.Cancel();
+            this.StreamingMode = Visibility.Hidden;
+        }
+
+        private void BtnStreamClick(object sender, RoutedEventArgs e)
+        {
+            if (!Validate())
+            {
+                return;
+            }
+
+            this.StreamingMode = Visibility.Visible;
+            StreamMessages();
+        }
         #endregion
+
     }
 }
