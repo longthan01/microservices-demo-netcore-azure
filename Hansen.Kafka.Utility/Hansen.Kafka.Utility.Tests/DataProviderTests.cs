@@ -68,7 +68,7 @@ namespace Hansen.Kafka.Utility.Tests
             Assert.IsTrue(topics.Count > 0);
             var nt = topics.FirstOrDefault(x => x.Name == newTopic);
             Assert.IsTrue(nt != null);
-            Assert.IsTrue(nt.Partitions.Count == 3);
+            Assert.IsTrue(nt.Partitions.Count() == 3);
             // create topic with 2 partition
         }
     }

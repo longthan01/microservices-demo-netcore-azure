@@ -36,7 +36,12 @@ namespace Hansen.Kafka.Utility.Providers
                         result.Add(new Topic()
                         {
                             Name = metadataTopic.Topic,
-                            Partitions = metadataTopic.Partitions.Select(x => new Partition { Id = x.PartitionId }).ToList()
+                            Partitions = metadataTopic.Partitions.Select(x => new Partition
+                            {
+                                Id = x.PartitionId,
+                                PartitionLeader = x.Leader,
+                                Replicas = x.Replicas.Select(y => y).ToList()
+                            }).ToList(),
                         });
                     }
                 }
@@ -74,7 +79,7 @@ namespace Hansen.Kafka.Utility.Providers
                 ConsumerConfig consumerConfig = new ConsumerConfig()
                 {
                     BootstrapServers = _connectionConfiguration.BootstrapServer,
-                    GroupId = Guid.NewGuid().ToString(),
+                    GroupId = Guid.NewGuid().ToString() + DateTime.Now.Ticks,
                     AutoOffsetReset = offsetResetSetting,
                     EnableAutoCommit = false
                 };
