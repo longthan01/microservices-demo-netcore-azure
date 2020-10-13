@@ -9,4 +9,8 @@ namespace Hansen.Kafka.Api.Models
     {
 
     }
+    public class TopicsCreateRequest
+    {
+        public string TopicName { get; set; }
+    }
 }

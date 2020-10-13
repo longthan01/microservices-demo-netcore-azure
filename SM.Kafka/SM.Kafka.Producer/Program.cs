@@ -14,6 +14,7 @@ namespace SM.Kafka.Producer
             {
                 BootstrapServers = "localhost:9092"
             }, args[1]);
+            string msgPrefix = args[2];
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (s, e) =>
             {
@@ -23,7 +24,7 @@ namespace SM.Kafka.Producer
             {
                 while (true)
                 {
-                    var task = pr.Publish(new MessageValue($"Producer {name}, SM message from NO-FUCKING-WHERE {DateTime.Now.Second}"));
+                    var task = pr.Publish(new MessageValue($"Producer {name}, {msgPrefix} - {DateTime.Now.Second}"));
                     task.Wait();
                     Console.WriteLine($"Result {task.Result.TopicPartition} - {task.Result.TopicPartitionOffset}");
                     Thread.Sleep(500);

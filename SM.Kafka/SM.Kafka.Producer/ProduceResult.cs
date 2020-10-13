@@ -2,7 +2,7 @@
 {
     public class ProduceResult
     {
-        public int TopicPartition { get; set; }
-        public int TopicPartitionOffset { get; set; }
+        public long TopicPartition { get; set; }
+        public long TopicPartitionOffset { get; set; }
     }
 }

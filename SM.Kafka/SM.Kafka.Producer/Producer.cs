@@ -21,21 +21,25 @@ namespace SM.Kafka.Producer
                 using (var p = new ProducerBuilder<Null, string>(_config).Build())
                 {
                     Console.WriteLine($"Produce message {mv.Value}");
-                    var dr = await p.ProduceAsync(this._topicName, new Message<Null, string>
+                    var random = new Random();
+                    TopicPartition tp = new TopicPartition(this._topicName, new Partition(random.Next(0, 5)));
+                    var dr = await p.ProduceAsync(tp, new Message<Null, string>
                     {
                         Value = mv.Value
                     });
                     return new ProduceResult()
                     {
-                        TopicPartitionOffset = dr.TopicPartitionOffset.Partition.Value,
+                        TopicPartitionOffset = dr.TopicPartitionOffset.Offset.Value,
                         TopicPartition = dr.TopicPartition.Partition.Value
                     };
                 }
             }
             catch (System.Exception e)
             {
-                throw;
+                Console.Write($"Error: {e.Message}");
             }
+
+            return new ProduceResult();
         }
     }
 

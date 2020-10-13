@@ -21,6 +21,7 @@ namespace SM.Kafka.Consumer
                 {
                     GroupId = Groups.SM_Group1,
                     BootstrapServers = "localhost:9092",
+                    EnableAutoCommit = true,
                     AutoOffsetReset = AutoOffsetReset.Earliest
                 }
             });

@@ -91,9 +91,10 @@ namespace Hansen.Kafka.Utility.Providers
                         var cr = consumer.Consume(cts.Token);
                         result.Add(new Message()
                         {
+                            Id = cr.Offset.Value,
                             Data = cr.Message.Value,
                             Topic = cr.Topic,
-                            PartitionOffset = cr.Partition.Value
+                            PartitionOffset = cr.TopicPartitionOffset.TopicPartition.Partition.Value
                         });
                     }
                 }
