@@ -9,12 +9,18 @@ namespace SM.Kafka.Producer
     {
         static void Main(string[] args)
         {
-            string name = args.Length > 0 ? args[0] : "Default";
+            if (args.Length != 4)
+            {
+                Console.WriteLine($"Sm.Kafka.producer server-info topic-name message");
+            }
+            string serverInfo = args[0];
+            string topicName = args[1];
+            string msg = args[2];
+            
             IProducer pr = new Producer(new ProducerConfig()
             {
-                BootstrapServers = "localhost:9092"
-            }, args[1]);
-            string msgPrefix = args[2];
+                BootstrapServers = serverInfo
+            }, topicName);
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress += (s, e) =>
             {
@@ -24,9 +30,9 @@ namespace SM.Kafka.Producer
             {
                 while (true)
                 {
-                    var task = pr.Publish(new MessageValue($"Producer {name}, {msgPrefix} - {DateTime.Now.Second}"));
+                    var task = pr.Publish(new MessageValue($"{msg}"));
                     task.Wait();
-                    Console.WriteLine($"Result {task.Result.TopicPartition} - {task.Result.TopicPartitionOffset}");
+                    //Console.WriteLine($"Result {task.Result.TopicPartition} - {task.Result.TopicPartitionOffset}");
                     Thread.Sleep(500);
                     if (cts.IsCancellationRequested)
                     {
