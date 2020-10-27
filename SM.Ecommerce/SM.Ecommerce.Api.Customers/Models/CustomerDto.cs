@@ -9,6 +9,6 @@ namespace SM.Ecommerce.Api.Customers.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public decimal Address { get; set; }
+        public string Address { get; set; }
     }
 }
