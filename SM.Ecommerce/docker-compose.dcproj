@@ -9,6 +9,7 @@
     <DockerServiceName>sm.ecommerce.api.orders</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="docker-compose-azure-service-fabric.yml" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>

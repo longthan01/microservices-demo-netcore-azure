@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SM.Ecommerce.Api.Search", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SM.Ecommerce.Shared", "SM.Ecommerce.Shared\SM.Ecommerce.Shared.csproj", "{40D006ED-27E4-4EA9-BB8A-4E09C67D3648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SM.Ecommerce.Tests", "SM.Ecommerce.Tests\SM.Ecommerce.Tests.csproj", "{EAFC4FC0-7154-4EB4-9641-A0E8E08673F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SM.Ecommerce.Tests", "SM.Ecommerce.Tests\SM.Ecommerce.Tests.csproj", "{EAFC4FC0-7154-4EB4-9641-A0E8E08673F0}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{A3ED0C6E-7EE9-4B05-B1C9-FB2A4A81D234}"
 EndProject
