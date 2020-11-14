@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders
+    spec:
+      containers:
+        - name: orders
+          image: sdr1905/smecommerceapiorders:latest
+          resources:
+            requests:
+              cpu: "0.2"
+              memory: "128Mi"
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+          ports:
+            - containerPort: 80
