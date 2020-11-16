@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Hansen.Kafka.Utility.Windows.Events.Topics;
+using System.Windows;
 
 namespace Hansen.Kafka.Utility.Windows
 {

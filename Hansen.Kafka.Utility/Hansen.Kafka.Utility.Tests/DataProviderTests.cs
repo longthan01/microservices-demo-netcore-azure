@@ -15,7 +15,7 @@ namespace Hansen.Kafka.Utility.Tests
         {
             ConnectionConfiguration config = new ConnectionConfiguration()
             {
-                BootstrapServer = "localhost:9092"
+                BootstrapServers = "localhost:9092"
             };
 
             KafkaDataProvider dataProvider = new KafkaDataProvider(config, LogManager.GetLogger(typeof(DataProviderTests)));
@@ -27,7 +27,7 @@ namespace Hansen.Kafka.Utility.Tests
         {
             ConnectionConfiguration config = new ConnectionConfiguration()
             {
-                BootstrapServer = "localhost:9092"
+                BootstrapServers = "localhost:9092"
             };
             KafkaDataProvider dataProvider = new KafkaDataProvider(config, LogManager.GetLogger(typeof(DataProviderTests)));
             var messages = dataProvider.GetMessagesAsync("sm-message").Result.ToList();
@@ -38,7 +38,7 @@ namespace Hansen.Kafka.Utility.Tests
         {
             ConnectionConfiguration config = new ConnectionConfiguration()
             {
-                BootstrapServer = "localhost:9092"
+                BootstrapServers = "localhost:9092"
             };
             KafkaDataProvider dataProvider = new KafkaDataProvider(config, LogManager.GetLogger(typeof(DataProviderTests)));
             string newTopic = $"UnitTest-{Guid.NewGuid().ToString()}-{DateTime.Now.Ticks}";
@@ -57,7 +57,7 @@ namespace Hansen.Kafka.Utility.Tests
         {
             ConnectionConfiguration config = new ConnectionConfiguration()
             {
-                BootstrapServer = "localhost:9092"
+                BootstrapServers = "localhost:9092"
             };
             KafkaDataProvider dataProvider = new KafkaDataProvider(config, LogManager.GetLogger(typeof(DataProviderTests)));
             string newTopic = $"UnitTest-{Guid.NewGuid().ToString()}-{DateTime.Now.Ticks}";

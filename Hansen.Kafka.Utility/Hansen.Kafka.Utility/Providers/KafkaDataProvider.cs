@@ -22,6 +22,7 @@ namespace Hansen.Kafka.Utility.Providers
         {
             _connectionConfiguration = connectionConfiguration;
             _logger = logger;
+            _logger?.Info($"Configuration: bootstrap servers : {_connectionConfiguration.BootstrapServers}");
         }
         public Task<IEnumerable<Topic>> GetTopicsAsync()
         {
@@ -78,7 +79,7 @@ namespace Hansen.Kafka.Utility.Providers
             {
                 ConsumerConfig consumerConfig = new ConsumerConfig()
                 {
-                    BootstrapServers = _connectionConfiguration.BootstrapServer,
+                    BootstrapServers = _connectionConfiguration.BootstrapServers,
                     GroupId = Guid.NewGuid().ToString() + DateTime.Now.Ticks,
                     AutoOffsetReset = offsetResetSetting,
                     EnableAutoCommit = false
@@ -113,7 +114,7 @@ namespace Hansen.Kafka.Utility.Providers
         }
         public async Task AddNewTopicAsync(string topicName, int numOfPartition, short replicationFactor)
         {
-            using (var adminClient = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = _connectionConfiguration.BootstrapServer }).Build())
+            using (var adminClient = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = _connectionConfiguration.BootstrapServers }).Build())
             {
                 try
                 {
@@ -125,6 +126,22 @@ namespace Hansen.Kafka.Utility.Providers
                     _logger.Error($"Topic creation failed with error: {e}");
                     throw;
                 }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Topic creation failed with error: {ex}");
+                    throw;
+                }
+            }
+        }
+        public async Task AddNewMessageAsync(string topicName, string message)
+        {
+            var config = new ProducerConfig
+            {
+                BootstrapServers = _connectionConfiguration.BootstrapServers,
+            };
+            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            {
+                await producer.ProduceAsync(topicName, new Message<Null, string> { Value = message });
             }
         }
     }

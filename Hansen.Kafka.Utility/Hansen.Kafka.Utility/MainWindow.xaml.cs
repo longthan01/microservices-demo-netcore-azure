@@ -3,12 +3,16 @@ using Hansen.Kafka.Utility.Configuration;
 using Hansen.Kafka.Utility.Models;
 using Hansen.Kafka.Utility.Providers;
 using Hansen.Kafka.Utility.Windows;
+using Hansen.Kafka.Utility.Windows.Events;
 using log4net;
 using log4net.Config;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,8 +29,9 @@ namespace Hansen.Kafka.Utility
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region properties - variables
-        private const string DEFAULT_HOST = "localhost";
-        private const string DEFAULT_PORT = "9092";
+        private readonly string DEFAULT_HOST = ConfigurationManager.AppSettings["DEFAULT_HOST"];
+        private readonly string DEFAULT_PORT = ConfigurationManager.AppSettings["DEFAULT_PORT"];
+        private readonly string DEFAULT_SERVERS = ConfigurationManager.AppSettings["DEFAULT_SERVERS"];
 
         public ObservableCollection<Topic> Topics { get; set; } = new ObservableCollection<Topic>();
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>();
@@ -63,6 +68,22 @@ namespace Hansen.Kafka.Utility
                     _port = DEFAULT_PORT;
                 }
                 OnPropertyChanged("Port");
+            }
+        }
+
+        private string _servers;
+
+        public string Servers
+        {
+            get { return string.IsNullOrEmpty(_servers) ? DEFAULT_SERVERS : _servers; }
+            set
+            {
+                _servers = value;
+                if (string.IsNullOrEmpty(_servers))
+                {
+                    _servers = DEFAULT_SERVERS;
+                }
+                OnPropertyChanged("Servers");
             }
         }
 
@@ -256,7 +277,14 @@ namespace Hansen.Kafka.Utility
                 return _addTopicCommand ?? (_addTopicCommand = new CommandHandler(() => ShowAddNewTopicWindow(NewTopicName), () => true));
             }
         }
-
+        private ICommand _addMessageCommand;
+        public ICommand AddMessageCommand
+        {
+            get
+            {
+                return _addMessageCommand ?? (_addMessageCommand = new CommandHandler(() => ShowAddNewMessageWindow(TopicName), () => true));
+            }
+        }
         #endregion
 
         #region helper methods
@@ -276,21 +304,107 @@ namespace Hansen.Kafka.Utility
             };
             antw.ShowDialog();
         }
-
+        private string GetBootstrapServers()
+        {
+            return this.Servers;
+        }
         public async Task AddNewTopic(string topicName, int numOfPartitions, short replicationFactor)
         {
+            LoadingVisibility = Visibility.Visible;
             try
             {
                 ConnectionConfiguration config = new ConnectionConfiguration()
                 {
-                    BootstrapServer = $"{Host}:{Port}"
+                    BootstrapServers = GetBootstrapServers()
                 };
                 KafkaDataProvider dataProvider = new KafkaDataProvider(config, _logger);
                 await dataProvider.AddNewTopicAsync(topicName, numOfPartitions, replicationFactor);
             }
             catch (Exception e)
             {
-                Logs.Add(e.Message);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Logs.Add(e.Message);
+                });
+            }
+            LoadingVisibility = Visibility.Hidden;
+        }
+        public void ShowAddNewMessageWindow(string topicName)
+        {
+            if (!Validate())
+            {
+                return;
+            }
+            AddNewMessageWindow window = new AddNewMessageWindow(topicName);
+            window.OnOk += async (sender, args) =>
+            {
+                LoadingVisibility = Visibility.Visible;
+                string message = PreProcessMessage(args.Message);
+                await AddNewMessageAsync(args.TopicName, message);
+                window.Close();
+                await LoadMessages();
+                LoadingVisibility = Visibility.Hidden;
+            };
+            window.ShowDialog();
+        }
+        private bool IsJson(string strInput)
+        {
+            if (string.IsNullOrWhiteSpace(strInput)) { return false; }
+            strInput = strInput.Trim();
+            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
+                (strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
+            {
+                try
+                {
+                    var obj = JToken.Parse(strInput);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    //Exception in parsing json
+                    return false;
+                }
+                catch (Exception ex) //some other exception
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private string PreProcessMessage(string msg)
+        {
+            if(IsJson(msg))
+            {
+                return msg;
+            }
+            else
+            {
+                return  JsonConvert.SerializeObject(new
+                {
+                    message = msg
+                });
+            }
+        }
+        public async Task AddNewMessageAsync(string topicName, string message)
+        {
+            try
+            {
+                ConnectionConfiguration config = new ConnectionConfiguration()
+                {
+                    BootstrapServers = GetBootstrapServers()
+                };
+                KafkaDataProvider dataProvider = new KafkaDataProvider(config, _logger);
+                await dataProvider.AddNewMessageAsync(topicName, message);
+            }
+            catch (Exception e)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Logs.Add(e.Message);
+                });
             }
         }
         public void ClearLogs()
@@ -303,7 +417,7 @@ namespace Hansen.Kafka.Utility
             Topics.Clear();
             var configuration = new ConnectionConfiguration()
             {
-                BootstrapServer = $"{Host}:{Port}"
+                BootstrapServers = GetBootstrapServers()
             };
             var dataProvider = new KafkaDataProvider(configuration, _logger);
             Task<IEnumerable<Topic>> task = null;
@@ -329,7 +443,7 @@ namespace Hansen.Kafka.Utility
             Messages.Clear();
             var configuration = new ConnectionConfiguration()
             {
-                BootstrapServer = $"{Host}:{Port}"
+                BootstrapServers = GetBootstrapServers()
             };
             var dataProvider = new KafkaDataProvider(configuration, _logger);
             Task<IEnumerable<Message>> task = null;
@@ -363,7 +477,7 @@ namespace Hansen.Kafka.Utility
             streamCancellationTokenSource = new CancellationTokenSource();
             var configuration = new ConnectionConfiguration()
             {
-                BootstrapServer = $"{Host}:{Port}"
+                BootstrapServers = GetBootstrapServers()
             };
             var dataProvider = new KafkaDataProvider(configuration, _logger);
             Timer timer = new Timer { Interval = 1000 };
@@ -450,7 +564,12 @@ namespace Hansen.Kafka.Utility
             this.StreamingMode = Visibility.Visible;
             StreamMessages();
         }
+        private void BtnAddMessageClick(object sender, RoutedEventArgs e)
+        {
+
+        }
         #endregion
+
 
     }
 }

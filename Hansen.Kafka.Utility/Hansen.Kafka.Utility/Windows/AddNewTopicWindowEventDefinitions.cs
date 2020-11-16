@@ -1,22 +1,21 @@
-﻿using System;
+﻿using Hansen.Kafka.Utility.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hansen.Kafka.Utility.Windows
+namespace Hansen.Kafka.Utility.Windows.Events.Messages
 {
     public class OnOkEventArgs : EventArgs
     {
-        public string TopicName { get; }
-        public int NumOfPartitions { get; set; }
-        public short ReplicationFactor { get; set; }
+        public string TopicName { get; set; }
+        public string Message { get; private set; }
 
-        public OnOkEventArgs(string topicName, int numOfPartitions, short replicationFactor)
+        public OnOkEventArgs(string topicName, string message)
         {
             TopicName = topicName;
-            this.NumOfPartitions = numOfPartitions;
-            this.ReplicationFactor = replicationFactor;
+            Message = message;
         }
     }
     public delegate void OnOk(object sender, OnOkEventArgs e);

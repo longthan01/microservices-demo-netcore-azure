@@ -8,7 +8,7 @@ namespace Hansen.Kafka.Utility.Configuration
     {
 
         [ConfigurationPropertyName("bootstrap.servers")]
-        public string BootstrapServer { get; set; }
+        public string BootstrapServers { get; set; }
 
         public IEnumerable<KeyValuePair<string, string>> ToPairs()
         {

@@ -44,7 +44,7 @@ namespace Hansen.Kafka.Api.Controllers
         {
             ConnectionConfiguration config = new ConnectionConfiguration()
             {
-                BootstrapServer = "localhost:9092"
+                BootstrapServers = "localhost:9092"
             };
             var dataProvider = new KafkaDataProvider(config, null);
             await dataProvider.AddNewTopicAsync(data.TopicName, 3, -1);
