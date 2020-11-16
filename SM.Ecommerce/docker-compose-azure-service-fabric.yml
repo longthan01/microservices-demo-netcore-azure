@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  orders:
+    image: sdr1905/smecommerceapiorders:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80/http"
+  customers:
+    image: sdr1905/smecommerceapicustomers:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80/http"
+  products:
+    image: sdr1905/smecommerceapiproducts:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80/http"
+  search:
+    image: sdr1905/smecommerceapisearch:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Services__Products=http://localhost:19081/lil/products/
+      - Services__Customers=http://localhost:19081/lil/customers/
+      - Services__Orders=http://localhost:19081/lil/orders/
+    ports:
+      - "6003:80"
+
